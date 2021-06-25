@@ -1,0 +1,28 @@
+version: '3'
+services:
+  db1:
+    image: kota65535/mysql-volatile:5.7
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --general-log
+    volumes:
+      - ./src/main/resources/db1/initdb.d:/docker-entrypoint-initdb.d
+    environment:
+      TZ: Asia/Tokyo
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+    ports:
+      - 13306:3306
+  db2:
+    image: kota65535/mysql-volatile:5.7
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --general-log
+    volumes:
+      - ./src/main/resources/db2/initdb.d:/docker-entrypoint-initdb.d
+    environment:
+      TZ: Asia/Tokyo
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+    ports:
+      - 13307:3306

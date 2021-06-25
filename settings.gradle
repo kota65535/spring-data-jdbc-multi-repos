@@ -1,0 +1,12 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        mavenLocal()
+    }
+    plugins {
+        id "org.springframework.boot" version springBootVersion
+        id "io.freefair.lombok" version "5.3.3.3"
+    }
+}
+
+rootProject.name = "spring-data-jdbc-test"

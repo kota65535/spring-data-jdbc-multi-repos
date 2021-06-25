@@ -1,0 +1,8 @@
+spring:
+  datasources:
+    one:
+      url: jdbc:mysql://127.0.0.1:13306/db1
+      username: root
+    two:
+      url: jdbc:mysql://127.0.0.1:13307/db2
+      username: root
