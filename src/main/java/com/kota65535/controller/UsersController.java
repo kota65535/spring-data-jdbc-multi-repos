@@ -2,6 +2,7 @@ package com.kota65535.controller;
 
 import com.kota65535.repository.one.Db1UserRepository;
 import com.kota65535.repository.one.UserEntity;
+import com.kota65535.repository.three.Db3UserRepository;
 import com.kota65535.repository.two.Db2UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,9 @@ public class UsersController {
   @Autowired
   private Db2UserRepository repository2;
 
+  @Autowired
+  private Db3UserRepository repository3;
+  
   @GetMapping(
       value = "/users1",
       produces = { "application/json" }
@@ -34,6 +38,17 @@ public class UsersController {
   )
   public ResponseEntity<User> getUser2() {
     User u = repository2.findById(1)
+        .map(e -> new User((e.getName())))
+        .orElseThrow(RuntimeException::new);
+    return ResponseEntity.ok(u);
+  }
+  
+  @GetMapping(
+      value = "/users3",
+      produces = { "application/json" }
+  )
+  public ResponseEntity<User> getUser3() {
+    User u = repository3.findById(1)
         .map(e -> new User((e.getName())))
         .orElseThrow(RuntimeException::new);
     return ResponseEntity.ok(u);

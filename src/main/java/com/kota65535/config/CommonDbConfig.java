@@ -9,7 +9,7 @@ import org.springframework.data.relational.core.dialect.Dialect;
 import org.springframework.data.relational.core.dialect.MySqlDialect;
 import org.springframework.data.relational.core.mapping.NamingStrategy;
 
-@Configuration(proxyBeanMethods = false)
+@Configuration
 public class CommonDbConfig {
   
   @Bean

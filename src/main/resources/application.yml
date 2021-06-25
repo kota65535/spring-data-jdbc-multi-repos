@@ -6,3 +6,6 @@ spring:
     two:
       url: jdbc:mysql://127.0.0.1:13307/db2
       username: root
+    three:
+      url: jdbc:postgresql://127.0.0.1:15432/db3
+      username: postgres

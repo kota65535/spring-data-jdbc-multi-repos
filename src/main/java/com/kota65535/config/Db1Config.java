@@ -71,7 +71,6 @@ public class Db1Config {
 
   @Bean
   @Qualifier("db1")
-  @Primary
   public JdbcConverter jdbcConverterDb1(
       JdbcMappingContext mappingContext,
       @Qualifier("db1") NamedParameterJdbcOperations jdbcOperationsDb1,

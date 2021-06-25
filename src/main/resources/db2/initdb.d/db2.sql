@@ -11,5 +11,5 @@ CREATE TABLE users
     name     varchar(255)
 );
 
-INSERT INTO users (name) VALUES ('hoge');
-INSERT INTO users (name) VALUES ('piyo');
+INSERT INTO users (name) VALUES ('spam');
+INSERT INTO users (name) VALUES ('ham');

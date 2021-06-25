@@ -31,11 +31,11 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 
 @EnableJdbcRepositories(
-    jdbcOperationsRef = "jdbcOperationsDb2",
-    transactionManagerRef = "transactionManagerDb2",
-    dataAccessStrategyRef = "dataAccessStrategyDb2",
+    jdbcOperationsRef = "jdbcOperationsDb3",
+    transactionManagerRef = "transactionManagerDb3",
+    dataAccessStrategyRef = "dataAccessStrategyDb3",
     basePackages = {
-        "com.kota65535.repository.two"
+        "com.kota65535.repository.three"
     }
 )
 @EnableAutoConfiguration(
@@ -43,61 +43,60 @@ import org.springframework.transaction.PlatformTransactionManager;
 )
 @Configuration
 @ConfigurationPropertiesScan
-public class Db2Config {
+public class Db3Config {
 
   @Bean
-  @Qualifier("db2")
-  public NamedParameterJdbcOperations jdbcOperationsDb2(
-      @Qualifier("db2") DataSource dataSourceDb2
+  @Qualifier("db3")
+  public NamedParameterJdbcOperations jdbcOperationsDb3(
+      @Qualifier("db3") DataSource dataSourceDb3
   ) {
-    return new NamedParameterJdbcTemplate(dataSourceDb2);
+    return new NamedParameterJdbcTemplate(dataSourceDb3);
   }
 
   @Bean
-  @Qualifier("db2")
-  public DataSource dataSourceDb2(
-      @Qualifier("db2") DataSourceProperties propertiesDb2
+  @Qualifier("db3")
+  public DataSource dataSourceDb3(
+      @Qualifier("db3") DataSourceProperties propertiesDb3
   ) {
-    return propertiesDb2.initializeDataSourceBuilder()
+    return propertiesDb3.initializeDataSourceBuilder()
         .type(HikariDataSource.class)
         .build();
   }
 
   @Bean
-  @Qualifier("db2")
-  @ConfigurationProperties(prefix = "spring.datasources.two")
-  public DataSourceProperties dataSourcePropertiesDb2() {
+  @Qualifier("db3")
+  @ConfigurationProperties(prefix = "spring.datasources.three")
+  public DataSourceProperties dataSourcePropertiesDb3() {
     return new DataSourceProperties();
   }
 
   @Bean
-  @Qualifier("db2")
-  @Primary
-  public JdbcConverter jdbcConverterDb2(
+  @Qualifier("db3")
+  public JdbcConverter jdbcConverterDb3(
       JdbcMappingContext mappingContext,
-      @Qualifier("db2") NamedParameterJdbcOperations jdbcOperationsDb2,
+      @Qualifier("db3") NamedParameterJdbcOperations jdbcOperationsDb3,
       @Lazy RelationResolver relationResolver,
       JdbcCustomConversions conversions, 
       Dialect dialect
   ) {
-    DefaultJdbcTypeFactory jdbcTypeFactory = new DefaultJdbcTypeFactory(jdbcOperationsDb2.getJdbcOperations());
+    DefaultJdbcTypeFactory jdbcTypeFactory = new DefaultJdbcTypeFactory(jdbcOperationsDb3.getJdbcOperations());
     return new BasicJdbcConverter(mappingContext, relationResolver, conversions, jdbcTypeFactory,
         dialect.getIdentifierProcessing());
   }
 
   @Bean
-  @Qualifier("db2")
-  public DataAccessStrategy dataAccessStrategyDb2(
-      @Qualifier("db2") NamedParameterJdbcOperations operations,
-      @Qualifier("db2") JdbcConverter jdbcConverter,
+  @Qualifier("db3")
+  public DataAccessStrategy dataAccessStrategyDb3(
+      @Qualifier("db3") NamedParameterJdbcOperations operations,
+      @Qualifier("db3") JdbcConverter jdbcConverter,
       JdbcMappingContext context,
       Dialect dialect) {
     return new DefaultDataAccessStrategy(new SqlGeneratorSource(context, jdbcConverter, dialect), context, jdbcConverter, operations);
   }
   
   @Bean
-  @Qualifier("db2")
-  public PlatformTransactionManager transactionManagerDb2(@Qualifier("db2") final DataSource dataSource) {
+  @Qualifier("db3")
+  public PlatformTransactionManager transactionManagerDb3(@Qualifier("db3") final DataSource dataSource) {
     return new DataSourceTransactionManager(dataSource);
   }
 }
