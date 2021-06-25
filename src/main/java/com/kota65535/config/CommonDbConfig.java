@@ -11,20 +11,24 @@ import org.springframework.data.relational.core.mapping.NamingStrategy;
 
 @Configuration
 public class CommonDbConfig {
-  
+
   @Bean
   public JdbcCustomConversions jdbcCustomConversions() {
     return new JdbcCustomConversions();
   }
 
+  // Because @EnableJdbcRepositories does not have an option to specify JdbcConverer ref, 
+  // we have to use only one SQL dialects.
   @Bean
   public Dialect jdbcDialect() {
     return MySqlDialect.INSTANCE;
   }
 
   @Bean
-  public JdbcMappingContext jdbcMappingContext(Optional<NamingStrategy> namingStrategy, JdbcCustomConversions customConversions) {
-    JdbcMappingContext mappingContext = new JdbcMappingContext(namingStrategy.orElse(NamingStrategy.INSTANCE));
+  public JdbcMappingContext jdbcMappingContext(Optional<NamingStrategy> namingStrategy,
+      JdbcCustomConversions customConversions) {
+    JdbcMappingContext mappingContext = new JdbcMappingContext(
+        namingStrategy.orElse(NamingStrategy.INSTANCE));
     mappingContext.setSimpleTypeHolder(customConversions.getSimpleTypeHolder());
     return mappingContext;
   }

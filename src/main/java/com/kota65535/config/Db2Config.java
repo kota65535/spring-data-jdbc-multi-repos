@@ -72,7 +72,6 @@ public class Db2Config {
 
   @Bean
   @Qualifier("db2")
-  @Primary
   public JdbcConverter jdbcConverterDb2(
       JdbcMappingContext mappingContext,
       @Qualifier("db2") NamedParameterJdbcOperations jdbcOperationsDb2,
