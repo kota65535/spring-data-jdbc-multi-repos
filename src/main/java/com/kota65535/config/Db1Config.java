@@ -76,7 +76,7 @@ public class Db1Config {
   public JdbcConverter jdbcConverterDb1(
       JdbcMappingContext mappingContext,
       @Qualifier("db1") NamedParameterJdbcOperations operations,
-      @Lazy RelationResolver relationResolver,
+      @Lazy @Qualifier("db1") RelationResolver relationResolver,
       JdbcCustomConversions conversions
   ) {
     DefaultJdbcTypeFactory jdbcTypeFactory = new DefaultJdbcTypeFactory(

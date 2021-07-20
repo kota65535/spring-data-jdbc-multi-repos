@@ -76,7 +76,7 @@ public class Db3Config {
   public JdbcConverter jdbcConverterDb3(
       JdbcMappingContext mappingContext,
       @Qualifier("db3") NamedParameterJdbcOperations operations,
-      @Lazy RelationResolver relationResolver,
+      @Lazy @Qualifier("db3") RelationResolver relationResolver,
       JdbcCustomConversions conversions
   ) {
     DefaultJdbcTypeFactory jdbcTypeFactory = new DefaultJdbcTypeFactory(
