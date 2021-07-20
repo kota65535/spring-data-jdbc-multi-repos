@@ -7,9 +7,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.jdbc.JdbcRepositoriesAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
+import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -56,19 +56,9 @@ public class Db3Config {
 
   @Bean
   @Qualifier("db3")
-  public DataSource dataSourceDb3(
-      @Qualifier("db3") DataSourceProperties propertiesDb3
-  ) {
-    return propertiesDb3.initializeDataSourceBuilder()
-        .type(HikariDataSource.class)
-        .build();
-  }
-
-  @Bean
-  @Qualifier("db3")
   @ConfigurationProperties(prefix = "spring.datasources.three")
-  public DataSourceProperties dataSourcePropertiesDb3() {
-    return new DataSourceProperties();
+  public HikariDataSource dataSourceDb3() {
+    return DataSourceBuilder.create().type(HikariDataSource.class).build();
   }
 
   @Bean

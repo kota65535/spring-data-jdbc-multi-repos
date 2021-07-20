@@ -1,11 +1,14 @@
 spring:
   datasources:
     one:
-      url: jdbc:mysql://127.0.0.1:13306/db1
+      jdbc-url: jdbc:mysql://127.0.0.1:13306/db1
       username: root
+      pool-name: DataSource-1 
     two:
-      url: jdbc:mysql://127.0.0.1:13307/db2
+      jdbc-url: jdbc:mysql://127.0.0.1:13307/db2
+      pool-name: DataSource-2
       username: root
     three:
-      url: jdbc:postgresql://127.0.0.1:15432/db3
+      jdbc-url: jdbc:postgresql://127.0.0.1:15432/db3
+      pool-name: DataSource-3
       username: postgres

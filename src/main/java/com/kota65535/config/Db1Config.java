@@ -7,9 +7,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.jdbc.JdbcRepositoriesAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
+import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -56,19 +56,9 @@ public class Db1Config {
 
   @Bean
   @Qualifier("db1")
-  public DataSource dataSourceDb1(
-      @Qualifier("db1") DataSourceProperties propertiesDb1
-  ) {
-    return propertiesDb1.initializeDataSourceBuilder()
-        .type(HikariDataSource.class)
-        .build();
-  }
-
-  @Bean
-  @Qualifier("db1")
   @ConfigurationProperties(prefix = "spring.datasources.one")
-  public DataSourceProperties dataSourcePropertiesDb1() {
-    return new DataSourceProperties();
+  public HikariDataSource dataSourceDb1() {
+    return DataSourceBuilder.create().type(HikariDataSource.class).build();
   }
 
   @Bean
