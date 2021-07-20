@@ -26,4 +26,6 @@ dependencies {
     runtimeOnly "mysql:mysql-connector-java"
     // PostgreSQL
     runtimeOnly "org.postgresql:postgresql"
+    
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor:${springBootVersion}"
 }
