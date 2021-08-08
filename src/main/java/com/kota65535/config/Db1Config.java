@@ -34,7 +34,6 @@ import org.springframework.transaction.PlatformTransactionManager;
     jdbcOperationsRef = "jdbcOperationsDb1",
     transactionManagerRef = "transactionManagerDb1",
     dataAccessStrategyRef = "dataAccessStrategyDb1",
-    jdbcConverterRef = "jdbcConverterDb1",
     basePackages = {
         "com.kota65535.repository.one"
     }
@@ -53,7 +52,7 @@ public class Db1Config {
   ) {
     return new NamedParameterJdbcTemplate(dataSourceDb1);
   }
-
+  
   @Bean
   @Qualifier("db1")
   @ConfigurationProperties(prefix = "spring.datasources.one")
@@ -63,24 +62,9 @@ public class Db1Config {
 
   @Bean
   @Qualifier("db1")
-  public JdbcConverter jdbcConverterDb1(
-      JdbcMappingContext mappingContext,
-      @Qualifier("db1") NamedParameterJdbcOperations operations,
-      @Lazy @Qualifier("db1") RelationResolver relationResolver,
-      JdbcCustomConversions conversions
-  ) {
-    DefaultJdbcTypeFactory jdbcTypeFactory = new DefaultJdbcTypeFactory(
-        operations.getJdbcOperations());
-    Dialect dialect = DialectResolver.getDialect(operations.getJdbcOperations());
-    return new BasicJdbcConverter(mappingContext, relationResolver, conversions, jdbcTypeFactory,
-        dialect.getIdentifierProcessing());
-  }
-
-  @Bean
-  @Qualifier("db1")
   public DataAccessStrategy dataAccessStrategyDb1(
       @Qualifier("db1") NamedParameterJdbcOperations operations,
-      @Qualifier("db1") JdbcConverter jdbcConverter,
+      JdbcConverter jdbcConverter,
       JdbcMappingContext context
   ) {
     return new DefaultDataAccessStrategy(
@@ -94,5 +78,19 @@ public class Db1Config {
   public PlatformTransactionManager transactionManagerDb1(
       @Qualifier("db1") final DataSource dataSource) {
     return new DataSourceTransactionManager(dataSource);
+  }
+  
+  @Bean
+  public JdbcConverter jdbcConverter(
+      JdbcMappingContext mappingContext,
+      @Qualifier("db1") NamedParameterJdbcOperations operations,
+      @Lazy @Qualifier("db1") RelationResolver relationResolver,
+      JdbcCustomConversions conversions
+  ) {
+    DefaultJdbcTypeFactory jdbcTypeFactory = new DefaultJdbcTypeFactory(
+        operations.getJdbcOperations());
+    Dialect dialect = DialectResolver.getDialect(operations.getJdbcOperations());
+    return new BasicJdbcConverter(mappingContext, relationResolver, conversions, jdbcTypeFactory,
+        dialect.getIdentifierProcessing());
   }
 }
