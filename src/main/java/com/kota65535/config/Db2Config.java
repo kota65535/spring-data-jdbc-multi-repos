@@ -12,13 +12,19 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.data.jdbc.core.convert.BasicJdbcConverter;
 import org.springframework.data.jdbc.core.convert.DataAccessStrategy;
 import org.springframework.data.jdbc.core.convert.DefaultDataAccessStrategy;
+import org.springframework.data.jdbc.core.convert.DefaultJdbcTypeFactory;
 import org.springframework.data.jdbc.core.convert.JdbcConverter;
+import org.springframework.data.jdbc.core.convert.JdbcCustomConversions;
+import org.springframework.data.jdbc.core.convert.RelationResolver;
 import org.springframework.data.jdbc.core.convert.SqlGeneratorSource;
 import org.springframework.data.jdbc.core.mapping.JdbcMappingContext;
 import org.springframework.data.jdbc.repository.config.DialectResolver;
 import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
+import org.springframework.data.relational.core.dialect.Dialect;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -28,6 +34,7 @@ import org.springframework.transaction.PlatformTransactionManager;
     jdbcOperationsRef = "jdbcOperationsDb2",
     transactionManagerRef = "transactionManagerDb2",
     dataAccessStrategyRef = "dataAccessStrategyDb2",
+    jdbcConverterRef = "jdbcConverterDb2",
     basePackages = {
         "com.kota65535.repository.two"
     }
@@ -56,9 +63,24 @@ public class Db2Config {
 
   @Bean
   @Qualifier("db2")
+  public JdbcConverter jdbcConverterDb2(
+      JdbcMappingContext mappingContext,
+      @Qualifier("db2") NamedParameterJdbcOperations operations,
+      @Lazy @Qualifier("db2") RelationResolver relationResolver,
+      JdbcCustomConversions conversions
+  ) {
+    DefaultJdbcTypeFactory jdbcTypeFactory = new DefaultJdbcTypeFactory(
+        operations.getJdbcOperations());
+    Dialect dialect = DialectResolver.getDialect(operations.getJdbcOperations());
+    return new BasicJdbcConverter(mappingContext, relationResolver, conversions, jdbcTypeFactory,
+        dialect.getIdentifierProcessing());
+  }
+
+  @Bean
+  @Qualifier("db2")
   public DataAccessStrategy dataAccessStrategyDb2(
       @Qualifier("db2") NamedParameterJdbcOperations operations,
-      JdbcConverter jdbcConverter,
+      @Qualifier("db2") JdbcConverter jdbcConverter,
       JdbcMappingContext context
   ) {
     return new DefaultDataAccessStrategy(
