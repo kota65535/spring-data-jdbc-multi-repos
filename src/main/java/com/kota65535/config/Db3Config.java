@@ -63,21 +63,6 @@ public class Db3Config {
 
   @Bean
   @Qualifier("db3")
-  public JdbcConverter jdbcConverterDb3(
-      JdbcMappingContext mappingContext,
-      @Qualifier("db3") NamedParameterJdbcOperations operations,
-      @Lazy @Qualifier("db3") RelationResolver relationResolver,
-      JdbcCustomConversions conversions
-  ) {
-    DefaultJdbcTypeFactory jdbcTypeFactory = new DefaultJdbcTypeFactory(
-        operations.getJdbcOperations());
-    Dialect dialect = DialectResolver.getDialect(operations.getJdbcOperations());
-    return new BasicJdbcConverter(mappingContext, relationResolver, conversions, jdbcTypeFactory,
-        dialect.getIdentifierProcessing());
-  }
-
-  @Bean
-  @Qualifier("db3")
   public DataAccessStrategy dataAccessStrategyDb3(
       @Qualifier("db3") NamedParameterJdbcOperations operations,
       @Qualifier("db3") JdbcConverter jdbcConverter,
@@ -94,5 +79,20 @@ public class Db3Config {
   public PlatformTransactionManager transactionManagerDb3(
       @Qualifier("db3") final DataSource dataSource) {
     return new DataSourceTransactionManager(dataSource);
+  }
+
+  @Bean
+  @Qualifier("db3")
+  public JdbcConverter jdbcConverterDb3(
+      JdbcMappingContext mappingContext,
+      @Qualifier("db3") NamedParameterJdbcOperations operations,
+      @Lazy @Qualifier("db3") RelationResolver relationResolver,
+      JdbcCustomConversions conversions
+  ) {
+    DefaultJdbcTypeFactory jdbcTypeFactory = new DefaultJdbcTypeFactory(
+        operations.getJdbcOperations());
+    Dialect dialect = DialectResolver.getDialect(operations.getJdbcOperations());
+    return new BasicJdbcConverter(mappingContext, relationResolver, conversions, jdbcTypeFactory,
+        dialect.getIdentifierProcessing());
   }
 }

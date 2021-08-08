@@ -63,21 +63,6 @@ public class Db2Config {
 
   @Bean
   @Qualifier("db2")
-  public JdbcConverter jdbcConverterDb2(
-      JdbcMappingContext mappingContext,
-      @Qualifier("db2") NamedParameterJdbcOperations operations,
-      @Lazy @Qualifier("db2") RelationResolver relationResolver,
-      JdbcCustomConversions conversions
-  ) {
-    DefaultJdbcTypeFactory jdbcTypeFactory = new DefaultJdbcTypeFactory(
-        operations.getJdbcOperations());
-    Dialect dialect = DialectResolver.getDialect(operations.getJdbcOperations());
-    return new BasicJdbcConverter(mappingContext, relationResolver, conversions, jdbcTypeFactory,
-        dialect.getIdentifierProcessing());
-  }
-
-  @Bean
-  @Qualifier("db2")
   public DataAccessStrategy dataAccessStrategyDb2(
       @Qualifier("db2") NamedParameterJdbcOperations operations,
       @Qualifier("db2") JdbcConverter jdbcConverter,
@@ -94,5 +79,20 @@ public class Db2Config {
   public PlatformTransactionManager transactionManagerDb2(
       @Qualifier("db2") final DataSource dataSource) {
     return new DataSourceTransactionManager(dataSource);
+  }
+
+  @Bean
+  @Qualifier("db2")
+  public JdbcConverter jdbcConverterDb2(
+      JdbcMappingContext mappingContext,
+      @Qualifier("db2") NamedParameterJdbcOperations operations,
+      @Lazy @Qualifier("db2") RelationResolver relationResolver,
+      JdbcCustomConversions conversions
+  ) {
+    DefaultJdbcTypeFactory jdbcTypeFactory = new DefaultJdbcTypeFactory(
+        operations.getJdbcOperations());
+    Dialect dialect = DialectResolver.getDialect(operations.getJdbcOperations());
+    return new BasicJdbcConverter(mappingContext, relationResolver, conversions, jdbcTypeFactory,
+        dialect.getIdentifierProcessing());
   }
 }
