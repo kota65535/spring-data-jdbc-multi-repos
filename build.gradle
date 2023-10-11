@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "jp.co.sre.aip.sample.basic"
-sourceCompatibility = "11"
+sourceCompatibility = "17"
 
 repositories {
     mavenLocal()
@@ -19,13 +19,12 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-web"
     implementation "org.springframework.boot:spring-boot-starter-data-jdbc"
     implementation "org.springframework.boot:spring-boot-starter-validation"
-
-    implementation "org.springframework.data:spring-data-jdbc:2.2.3"
+    implementation "org.springframework.data:spring-data-jdbc"
     
     // MySQL
-    runtimeOnly "mysql:mysql-connector-java"
+    runtimeOnly "mysql:mysql-connector-java:8.0.33"
     // PostgreSQL
-    runtimeOnly "org.postgresql:postgresql"
+    runtimeOnly "org.postgresql:postgresql:42.6.0"
     
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor:${springBootVersion}"
 }
