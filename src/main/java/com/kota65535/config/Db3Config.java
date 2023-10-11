@@ -12,16 +12,25 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.data.jdbc.core.convert.BasicJdbcConverter;
+import org.springframework.data.jdbc.core.convert.BatchJdbcOperations;
 import org.springframework.data.jdbc.core.convert.DataAccessStrategy;
 import org.springframework.data.jdbc.core.convert.DefaultDataAccessStrategy;
+import org.springframework.data.jdbc.core.convert.DefaultJdbcTypeFactory;
+import org.springframework.data.jdbc.core.convert.InsertStrategyFactory;
 import org.springframework.data.jdbc.core.convert.JdbcConverter;
+import org.springframework.data.jdbc.core.convert.JdbcCustomConversions;
+import org.springframework.data.jdbc.core.convert.RelationResolver;
 import org.springframework.data.jdbc.core.convert.SqlGeneratorSource;
+import org.springframework.data.jdbc.core.convert.SqlParametersFactory;
 import org.springframework.data.jdbc.core.mapping.JdbcMappingContext;
 import org.springframework.data.jdbc.repository.config.DialectResolver;
 import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
+import org.springframework.data.relational.core.dialect.Dialect;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.jdbc.support.JdbcTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 
 @EnableJdbcRepositories(
@@ -41,6 +50,13 @@ public class Db3Config {
 
   @Bean
   @Qualifier("db3")
+  @ConfigurationProperties(prefix = "spring.datasources.three")
+  public HikariDataSource dataSourceDb3() {
+    return DataSourceBuilder.create().type(HikariDataSource.class).build();
+  }
+
+  @Bean
+  @Qualifier("db3")
   public NamedParameterJdbcOperations jdbcOperationsDb3(
       @Qualifier("db3") DataSource dataSourceDb3
   ) {
@@ -49,28 +65,43 @@ public class Db3Config {
 
   @Bean
   @Qualifier("db3")
-  @ConfigurationProperties(prefix = "spring.datasources.three")
-  public HikariDataSource dataSourceDb3() {
-    return DataSourceBuilder.create().type(HikariDataSource.class).build();
+  public PlatformTransactionManager transactionManagerDb3(
+      @Qualifier("db3") final DataSource dataSource
+  ) {
+    return new JdbcTransactionManager(dataSource);
+  }
+  
+  @Bean
+  @Qualifier("db3")
+  public JdbcConverter jdbcConverterDb3(
+      JdbcMappingContext mappingContext,
+      @Qualifier("db3") NamedParameterJdbcOperations operations,
+      @Lazy @Qualifier("db3") RelationResolver relationResolver,
+      JdbcCustomConversions conversions
+  ) {
+    DefaultJdbcTypeFactory jdbcTypeFactory = new DefaultJdbcTypeFactory(operations.getJdbcOperations());
+    Dialect dialect = DialectResolver.getDialect(operations.getJdbcOperations());
+    return new BasicJdbcConverter(mappingContext, relationResolver, conversions, jdbcTypeFactory,
+        dialect.getIdentifierProcessing());
   }
 
   @Bean
   @Qualifier("db3")
   public DataAccessStrategy dataAccessStrategyDb3(
       @Qualifier("db3") NamedParameterJdbcOperations operations,
-      JdbcConverter jdbcConverter,
+      @Qualifier("db3") JdbcConverter jdbcConverter,
       JdbcMappingContext context
   ) {
     return new DefaultDataAccessStrategy(
-        new SqlGeneratorSource(context, jdbcConverter,
-            DialectResolver.getDialect(operations.getJdbcOperations())),
-        context, jdbcConverter, operations);
-  }
-
-  @Bean
-  @Qualifier("db3")
-  public PlatformTransactionManager transactionManagerDb3(
-      @Qualifier("db3") final DataSource dataSource) {
-    return new DataSourceTransactionManager(dataSource);
+        new SqlGeneratorSource(context, jdbcConverter, DialectResolver.getDialect(operations.getJdbcOperations())),
+        context,
+        jdbcConverter,
+        operations,
+        new SqlParametersFactory(context, jdbcConverter),
+        new InsertStrategyFactory(
+            operations,
+            new BatchJdbcOperations(operations.getJdbcOperations()),
+            DialectResolver.getDialect(operations.getJdbcOperations())
+        ));
   }
 }
