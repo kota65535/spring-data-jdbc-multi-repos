@@ -1,1 +1,1 @@
-# spring-data-multi-repos
+# spring-data-jdbc-multi-repos
