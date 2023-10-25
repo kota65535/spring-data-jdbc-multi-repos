@@ -18,7 +18,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.context.annotation.Primary;
 import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
 import org.springframework.data.jdbc.core.convert.DataAccessStrategy;
 import org.springframework.data.jdbc.core.convert.JdbcConverter;
@@ -61,7 +60,6 @@ public class Db1Config {
 
   @Bean
   @Qualifier("db1")
-  @Primary
   @ConfigurationProperties(prefix = "spring.datasources.one")
   public HikariDataSource dataSourceDb1() {
     return DataSourceBuilder.create().type(HikariDataSource.class).build();
@@ -69,7 +67,6 @@ public class Db1Config {
 
   @Bean
   @Qualifier("db1")
-  @Primary
   public NamedParameterJdbcOperations jdbcOperationsDb1(
       @Qualifier("db1") DataSource dataSource
   ) {
@@ -78,7 +75,6 @@ public class Db1Config {
 
   @Bean
   @Qualifier("db1")
-  @Primary
   public PlatformTransactionManager transactionManagerDb1(
       @Qualifier("db1") DataSource dataSource
   ) {
@@ -87,14 +83,12 @@ public class Db1Config {
 
   @Bean
   @Qualifier("db1")
-  @Primary
   public RelationalManagedTypes jdbcManagedTypesDb1() throws ClassNotFoundException {
     return base.jdbcManagedTypes();
   }
 
   @Bean
   @Qualifier("db1")
-  @Primary
   public JdbcMappingContext jdbcMappingContextDb1(
       Optional<NamingStrategy> namingStrategy,
       @Qualifier("db1") JdbcCustomConversions customConversions,
@@ -104,7 +98,6 @@ public class Db1Config {
 
   @Bean
   @Qualifier("db1")
-  @Primary
   public JdbcConverter jdbcConverterDb1(
       @Qualifier("db1") JdbcMappingContext mappingContext,
       @Qualifier("db1") NamedParameterJdbcOperations operations,
@@ -116,14 +109,12 @@ public class Db1Config {
 
   @Bean
   @Qualifier("db1")
-  @Primary
   public JdbcCustomConversions jdbcCustomConversionsDb1() {
     return base.jdbcCustomConversions();
   }
 
   @Bean
   @Qualifier("db1")
-  @Primary
   public JdbcAggregateTemplate jdbcAggregateTemplateDb1(
       ApplicationContext applicationContext,
       @Qualifier("db1") JdbcMappingContext mappingContext,
@@ -134,7 +125,6 @@ public class Db1Config {
 
   @Bean
   @Qualifier("db1")
-  @Primary
   public DataAccessStrategy dataAccessStrategyDb1(
       @Qualifier("db1") NamedParameterJdbcOperations operations,
       @Qualifier("db1") JdbcConverter jdbcConverter,
@@ -145,7 +135,6 @@ public class Db1Config {
 
   @Bean
   @Qualifier("db1")
-  @Primary
   public Dialect jdbcDialectDb1(@Qualifier("db1") NamedParameterJdbcOperations operations) {
     return base.jdbcDialect(operations);
   }
