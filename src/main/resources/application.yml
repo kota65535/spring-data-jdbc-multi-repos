@@ -5,13 +5,14 @@ spring:
       username: root
       pool-name: DataSource-1 
     two:
-      jdbc-url: jdbc:mysql://127.0.0.1:13307/db2
-      pool-name: DataSource-2
-      username: root
-    three:
-      jdbc-url: jdbc:postgresql://127.0.0.1:15432/db3
-      pool-name: DataSource-3
+      jdbc-url: jdbc:postgresql://127.0.0.1:15432/db2
       username: postgres
+      pool-name: DataSource-2
+    three:
+      jdbc-url: jdbc:sqlserver://127.0.0.1:11433;databaseName=db3;trustServerCertificate=true
+      username: SA
+      password: <YourStrong@Passw0rd>
+      pool-name: DataSource-3
 
 logging:
   level:

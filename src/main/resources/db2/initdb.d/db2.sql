@@ -1,15 +1,15 @@
 DROP DATABASE IF EXISTS db2;
-CREATE DATABASE db2
-    DEFAULT CHARACTER SET utf8mb4
-    DEFAULT COLLATE utf8mb4_general_ci;
+CREATE DATABASE db2 ENCODING 'UTF-8';
 
-USE db2;
+\c db2;
 
 CREATE TABLE users
 (
-    id       int PRIMARY KEY AUTO_INCREMENT,
+    id SERIAL PRIMARY KEY,
     name     varchar(255)
 );
 
-INSERT INTO users (name) VALUES ('spam');
-INSERT INTO users (name) VALUES ('ham');
+INSERT INTO users (name)
+VALUES ('hoge');
+INSERT INTO users (name)
+VALUES ('piyo');

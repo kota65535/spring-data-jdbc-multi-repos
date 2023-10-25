@@ -9,18 +9,19 @@ services:
     ports:
       - 13306:3306
   db2:
-    image: mysql
-    volumes:
-      - ./src/main/resources/db2/initdb.d:/docker-entrypoint-initdb.d
-    environment:
-      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
-    ports:
-      - 13307:3306
-  db3:
     image: postgres
     volumes:
-      - ./src/main/resources/db3/initdb.d:/docker-entrypoint-initdb.d
+      - ./src/main/resources/db2/initdb.d:/docker-entrypoint-initdb.d
     environment:
       POSTGRES_HOST_AUTH_METHOD: trust
     ports:
       - 15432:5432
+  db3:
+    image: mcr.microsoft.com/mssql/server
+    volumes:
+      - ./src/main/resources/db3/initdb.d:/docker-entrypoint-initdb.d
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=<YourStrong@Passw0rd>
+    ports:
+      - 11433:1433

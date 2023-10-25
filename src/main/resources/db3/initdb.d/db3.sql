@@ -1,13 +1,17 @@
 DROP DATABASE IF EXISTS db3;
-CREATE DATABASE db3 ENCODING 'UTF-8';
-
-\c db3;
+GO
+CREATE DATABASE db3;
+GO
 
 CREATE TABLE users
 (
-    id       SERIAL PRIMARY KEY,
+    id int PRIMARY KEY IDENTITY (1,1),
     name     varchar(255)
 );
+GO
 
-INSERT INTO users (name) VALUES ('hoge');
-INSERT INTO users (name) VALUES ('piyo');
+INSERT INTO users (name)
+VALUES ('spam');
+INSERT INTO users (name)
+VALUES ('ham');
+GO
