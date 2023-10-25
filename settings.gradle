@@ -2,6 +2,9 @@ pluginManagement {
     repositories {
         gradlePluginPortal()
         mavenLocal()
+        maven {
+            url "https://repo.spring.io/milestone"
+        }
     }
     plugins {
         id "org.springframework.boot" version springBootVersion

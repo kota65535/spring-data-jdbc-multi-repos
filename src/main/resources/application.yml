@@ -12,3 +12,7 @@ spring:
       jdbc-url: jdbc:postgresql://127.0.0.1:15432/db3
       pool-name: DataSource-3
       username: postgres
+
+logging:
+  level:
+    root: debug

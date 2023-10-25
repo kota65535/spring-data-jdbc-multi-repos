@@ -10,6 +10,9 @@ sourceCompatibility = "17"
 repositories {
     mavenLocal()
     mavenCentral()
+    maven {
+        url "https://repo.spring.io/milestone"
+    }
 }
 
 dependencies {
@@ -20,7 +23,8 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-data-jdbc"
     implementation "org.springframework.boot:spring-boot-starter-validation"
     implementation "org.springframework.data:spring-data-jdbc"
-    
+    implementation 'org.yaml:snakeyaml:2.2'
+
     // MySQL
     runtimeOnly "mysql:mysql-connector-java:8.0.33"
     // PostgreSQL

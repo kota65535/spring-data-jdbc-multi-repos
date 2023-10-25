@@ -1,10 +1,8 @@
 package com.kota65535.controller;
 
 import com.kota65535.repository.one.Db1UserRepository;
-import com.kota65535.repository.one.UserEntity;
 import com.kota65535.repository.three.Db3UserRepository;
 import com.kota65535.repository.two.Db2UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,15 +10,18 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class UsersController {
   
-  @Autowired
-  private Db1UserRepository repository1;
+  private final Db1UserRepository repository1;
 
-  @Autowired
-  private Db2UserRepository repository2;
+  private final Db2UserRepository repository2;
 
-  @Autowired
-  private Db3UserRepository repository3;
-  
+  private final Db3UserRepository repository3;
+
+  public UsersController(Db1UserRepository repository1, Db2UserRepository repository2, Db3UserRepository repository3) {
+    this.repository1 = repository1;
+    this.repository2 = repository2;
+    this.repository3 = repository3;
+  }
+
   @GetMapping(
       value = "/users1",
       produces = { "application/json" }
@@ -42,7 +43,7 @@ public class UsersController {
         .orElseThrow(RuntimeException::new);
     return ResponseEntity.ok(u);
   }
-  
+
   @GetMapping(
       value = "/users3",
       produces = { "application/json" }
