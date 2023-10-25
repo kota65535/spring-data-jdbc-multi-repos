@@ -4,7 +4,7 @@ plugins {
     id "io.freefair.lombok"
 }
 
-group = "jp.co.sre.aip.sample.basic"
+group = "com.kota65535"
 sourceCompatibility = "17"
 
 repositories {
