@@ -7,6 +7,7 @@ import com.kota65535.repository.two.Db2UserRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.StreamSupport;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -59,7 +60,7 @@ public class UsersController {
     if (name == null) {
       return StreamSupport.stream(repository3.findAll().spliterator(), false).map(this::toUser).toList();
     } else {
-      return repository3.findByNameContaining(name).stream().map(this::toUser).toList();
+      return repository3.findByNameContaining(name, PageRequest.of(1, 1)).stream().map(this::toUser).toList();
     }
   }
 
