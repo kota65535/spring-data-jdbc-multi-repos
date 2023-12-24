@@ -29,8 +29,6 @@ dependencies {
     runtimeOnly "mysql:mysql-connector-java:8.0.33"
     // PostgreSQL
     runtimeOnly "org.postgresql:postgresql:42.6.0"
-    // Microsoft SQL Server
-    runtimeOnly 'com.microsoft.sqlserver:mssql-jdbc:12.4.1.jre11'
 
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor:${springBootVersion}"
 }

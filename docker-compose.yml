@@ -16,12 +16,3 @@ services:
       POSTGRES_HOST_AUTH_METHOD: trust
     ports:
       - 15432:5432
-  db3:
-    image: mcr.microsoft.com/mssql/server
-    volumes:
-      - ./src/main/resources/db3/initdb.d:/docker-entrypoint-initdb.d
-    environment:
-      - ACCEPT_EULA=Y
-      - SA_PASSWORD=<YourStrong@Passw0rd>
-    ports:
-      - 11433:1433

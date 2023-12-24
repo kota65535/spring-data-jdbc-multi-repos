@@ -2,7 +2,6 @@ package com.kota65535.controller;
 
 import com.kota65535.repository.one.Db1UserRepository;
 import com.kota65535.repository.one.UserEntity;
-import com.kota65535.repository.three.Db3UserRepository;
 import com.kota65535.repository.two.Db2UserRepository;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,12 +18,9 @@ public class UsersController {
 
   private final Db2UserRepository repository2;
 
-  private final Db3UserRepository repository3;
-
-  public UsersController(Db1UserRepository repository1, Db2UserRepository repository2, Db3UserRepository repository3) {
+  public UsersController(Db1UserRepository repository1, Db2UserRepository repository2) {
     this.repository1 = repository1;
     this.repository2 = repository2;
-    this.repository3 = repository3;
   }
 
   @GetMapping(
@@ -35,7 +31,6 @@ public class UsersController {
     List<User> users = new ArrayList<>();
     users.addAll(getUsers1(name));
     users.addAll(getUsers2(name));
-    users.addAll(getUsers3(name));
     return ResponseEntity.ok(new Users(users));
   }
 
@@ -55,23 +50,11 @@ public class UsersController {
     }
   }
 
-  private List<User> getUsers3(String name) {
-    if (name == null) {
-      return StreamSupport.stream(repository3.findAll().spliterator(), false).map(this::toUser).toList();
-    } else {
-      return repository3.findByNameContaining(name).stream().map(this::toUser).toList();
-    }
-  }
-
   private User toUser(UserEntity entity) {
     return new User(entity.getName());
   }
 
   private User toUser(com.kota65535.repository.two.UserEntity entity) {
-    return new User(entity.getName());
-  }
-
-  private User toUser(com.kota65535.repository.three.UserEntity entity) {
     return new User(entity.getName());
   }
 }
