@@ -2,6 +2,7 @@ plugins {
     id "java"
     id "org.springframework.boot"
     id "io.freefair.lombok"
+    id "com.avast.gradle.docker-compose"
 }
 
 group = "com.kota65535"
@@ -23,12 +24,19 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-data-jdbc"
     implementation "org.springframework.boot:spring-boot-starter-validation"
     implementation "org.springframework.data:spring-data-jdbc"
-    implementation 'org.yaml:snakeyaml:2.2'
 
     // MySQL
     runtimeOnly "mysql:mysql-connector-java:8.0.33"
     // PostgreSQL
     runtimeOnly "org.postgresql:postgresql:42.6.0"
 
+    testImplementation "org.springframework.boot:spring-boot-starter-test"
+
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor:${springBootVersion}"
+}
+
+test {
+    useJUnitPlatform()
+    dependsOn composeUp
+    finalizedBy composeDown
 }
