@@ -82,6 +82,9 @@ public class Db2Config {
     Dialect dialect = base.jdbcDialect(operations);
     JdbcCustomConversions conversions = base.jdbcCustomConversions(Optional.of(dialect));
     JdbcMappingContext mappingContext = base.jdbcMappingContext(Optional.empty(), conversions, base.jdbcManagedTypes());
+
+    // Creates a proxy instance of RelationResolver to avoid circular dependency of JdbcConverter and DataAccessStrategy.
+    // Target source is a dummy at first, and later it is swapped with the real DataAccessStrategy instance.
     HotSwappableTargetSource targetSource = new HotSwappableTargetSource(new Object());
     RelationResolver relationResolver = ProxyFactory.getProxy(RelationResolver.class, targetSource);
     JdbcConverter converter = base.jdbcConverter(mappingContext, operations, relationResolver, conversions, dialect);
