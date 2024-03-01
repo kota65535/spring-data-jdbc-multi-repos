@@ -23,7 +23,7 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-web"
     implementation "org.springframework.boot:spring-boot-starter-data-jdbc"
     implementation "org.springframework.boot:spring-boot-starter-validation"
-    implementation "org.springframework.data:spring-data-jdbc"
+    implementation "org.springframework.data:spring-data-jdbc:3.3.0-SNAPSHOT"
 
     // MySQL
     runtimeOnly "mysql:mysql-connector-java:8.0.33"

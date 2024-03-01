@@ -9,26 +9,28 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestClient;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 class UsersControllerTest {
 
   @LocalServerPort
   int port;
-  RestTemplate client;
+  RestClient client;
 
   @BeforeEach
   void beforeEach() {
-    client = new RestTemplateBuilder()
-        .rootUri("http://localhost:%d".formatted(port))
+    client = RestClient.builder()
+        .baseUrl("http://localhost:%d".formatted(port))
         .build();
   }
 
   @Test
   void testGetUsers() {
-    Users users = client.getForObject("/users", Users.class);
+    Users users = client.get()
+        .uri("/users")
+        .retrieve()
+        .body(Users.class);
     assertThat(users.getUsers()).hasSize(4);
   }
 }

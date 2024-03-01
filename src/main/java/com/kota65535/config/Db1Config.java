@@ -1,12 +1,11 @@
 package com.kota65535.config;
 
 
-import com.kota65535.config.Db1Config.JdbcRepositoryFactoryBeanDb1;
 import com.zaxxer.hikari.HikariDataSource;
-import java.io.Serializable;
 import java.util.Optional;
 import javax.sql.DataSource;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.aop.framework.ProxyFactory;
+import org.springframework.aop.target.HotSwappableTargetSource;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.jdbc.JdbcRepositoriesAutoConfiguration;
@@ -17,7 +16,7 @@ import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
+import org.springframework.data.jdbc.core.JdbcAggregateOperations;
 import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
 import org.springframework.data.jdbc.core.convert.DataAccessStrategy;
 import org.springframework.data.jdbc.core.convert.JdbcConverter;
@@ -26,19 +25,15 @@ import org.springframework.data.jdbc.core.convert.RelationResolver;
 import org.springframework.data.jdbc.core.mapping.JdbcMappingContext;
 import org.springframework.data.jdbc.repository.config.AbstractJdbcConfiguration;
 import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
-import org.springframework.data.jdbc.repository.support.JdbcRepositoryFactoryBean;
-import org.springframework.data.relational.RelationalManagedTypes;
 import org.springframework.data.relational.core.dialect.Dialect;
-import org.springframework.data.relational.core.mapping.NamingStrategy;
-import org.springframework.data.relational.core.mapping.RelationalMappingContext;
-import org.springframework.data.repository.Repository;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.JdbcTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 
 @EnableJdbcRepositories(
-    repositoryFactoryBeanClass = JdbcRepositoryFactoryBeanDb1.class,
+    jdbcOperationsRef = "jdbcOperationsDb1",
+    jdbcAggregateOperationsRef = "jdbcAggregateOperationsDb1",
     transactionManagerRef = "transactionManagerDb1",
     basePackages = {
         "com.kota65535.repository.one"
@@ -51,9 +46,11 @@ import org.springframework.transaction.PlatformTransactionManager;
 @ConfigurationPropertiesScan
 public class Db1Config {
 
+  private final ApplicationContext applicationContext;
   private final AbstractJdbcConfiguration base;
 
   public Db1Config(ApplicationContext applicationContext) {
+    this.applicationContext = applicationContext;
     this.base = new AbstractJdbcConfiguration();
     this.base.setApplicationContext(applicationContext);
   }
@@ -67,113 +64,32 @@ public class Db1Config {
 
   @Bean
   @Qualifier("db1")
-  public NamedParameterJdbcOperations jdbcOperationsDb1(
-      @Qualifier("db1") DataSource dataSource
-  ) {
+  public NamedParameterJdbcOperations jdbcOperationsDb1(@Qualifier("db1") DataSource dataSource) {
     return new NamedParameterJdbcTemplate(dataSource);
   }
 
   @Bean
   @Qualifier("db1")
-  public PlatformTransactionManager transactionManagerDb1(
-      @Qualifier("db1") DataSource dataSource
-  ) {
+  public PlatformTransactionManager transactionManagerDb1(@Qualifier("db1") DataSource dataSource) {
     return new JdbcTransactionManager(dataSource);
   }
 
   @Bean
   @Qualifier("db1")
-  public RelationalManagedTypes jdbcManagedTypesDb1() throws ClassNotFoundException {
-    return base.jdbcManagedTypes();
-  }
+  public JdbcAggregateOperations jdbcAggregateOperationsDb1(
+      @Qualifier("db1") NamedParameterJdbcOperations operations
+  ) throws ClassNotFoundException {
+    Dialect dialect = base.jdbcDialect(operations);
+    JdbcCustomConversions conversions = base.jdbcCustomConversions(Optional.of(dialect));
+    JdbcMappingContext mappingContext = base.jdbcMappingContext(Optional.empty(), conversions, base.jdbcManagedTypes());
 
-  @Bean
-  @Qualifier("db1")
-  public JdbcMappingContext jdbcMappingContextDb1(
-      Optional<NamingStrategy> namingStrategy,
-      @Qualifier("db1") JdbcCustomConversions customConversions,
-      @Qualifier("db1") RelationalManagedTypes jdbcManagedTypes) {
-    return base.jdbcMappingContext(namingStrategy, customConversions, jdbcManagedTypes);
-  }
-
-  @Bean
-  @Qualifier("db1")
-  public JdbcConverter jdbcConverterDb1(
-      @Qualifier("db1") JdbcMappingContext mappingContext,
-      @Qualifier("db1") NamedParameterJdbcOperations operations,
-      @Qualifier("db1") @Lazy RelationResolver relationResolver,
-      @Qualifier("db1") JdbcCustomConversions conversions,
-      @Qualifier("db1") Dialect dialect) {
-    return base.jdbcConverter(mappingContext, operations, relationResolver, conversions, dialect);
-  }
-
-  @Bean
-  @Qualifier("db1")
-  public JdbcCustomConversions jdbcCustomConversionsDb1() {
-    return base.jdbcCustomConversions();
-  }
-
-  @Bean
-  @Qualifier("db1")
-  public JdbcAggregateTemplate jdbcAggregateTemplateDb1(
-      ApplicationContext applicationContext,
-      @Qualifier("db1") JdbcMappingContext mappingContext,
-      @Qualifier("db1") JdbcConverter converter,
-      @Qualifier("db1") DataAccessStrategy dataAccessStrategy) {
-    return base.jdbcAggregateTemplate(applicationContext, mappingContext, converter, dataAccessStrategy);
-  }
-
-  @Bean
-  @Qualifier("db1")
-  public DataAccessStrategy dataAccessStrategyDb1(
-      @Qualifier("db1") NamedParameterJdbcOperations operations,
-      @Qualifier("db1") JdbcConverter jdbcConverter,
-      @Qualifier("db1") JdbcMappingContext context,
-      @Qualifier("db1") Dialect dialect) {
-    return base.dataAccessStrategyBean(operations, jdbcConverter, context, dialect);
-  }
-
-  @Bean
-  @Qualifier("db1")
-  public Dialect jdbcDialectDb1(@Qualifier("db1") NamedParameterJdbcOperations operations) {
-    return base.jdbcDialect(operations);
-  }
-
-  public static class JdbcRepositoryFactoryBeanDb1<T extends Repository<S, ID>, S, ID extends Serializable> extends
-      JdbcRepositoryFactoryBean<T, S, ID> {
-
-    public JdbcRepositoryFactoryBeanDb1(Class<T> repositoryInterface) {
-      super(repositoryInterface);
-    }
-
-    @Override
-    @Autowired
-    public void setDataAccessStrategy(@Qualifier("db1") DataAccessStrategy dataAccessStrategy) {
-      super.setDataAccessStrategy(dataAccessStrategy);
-    }
-
-    @Override
-    @Autowired
-    public void setJdbcOperations(@Qualifier("db1") NamedParameterJdbcOperations operations) {
-      super.setJdbcOperations(operations);
-    }
-
-    @Override
-    @Autowired
-    public void setMappingContext(@Qualifier("db1") RelationalMappingContext mappingContext) {
-      super.setMappingContext(mappingContext);
-    }
-
-    @Override
-    @Autowired
-    public void setDialect(@Qualifier("db1") Dialect dialect) {
-      super.setDialect(dialect);
-    }
-
-    @Override
-    @Autowired
-    public void setConverter(@Qualifier("db1") JdbcConverter converter) {
-      super.setConverter(converter);
-    }
+    // Creates a proxy instance of RelationResolver to avoid circular dependency of JdbcConverter and DataAccessStrategy.
+    // Target source is a dummy at first, and later it is swapped with the real DataAccessStrategy instance.
+    HotSwappableTargetSource targetSource = new HotSwappableTargetSource(new Object());
+    RelationResolver relationResolver = ProxyFactory.getProxy(RelationResolver.class, targetSource);
+    JdbcConverter converter = base.jdbcConverter(mappingContext, operations, relationResolver, conversions, dialect);
+    DataAccessStrategy dataAccessStrategy = base.dataAccessStrategyBean(operations, converter, mappingContext, dialect);
+    targetSource.swap(dataAccessStrategy);
+    return new JdbcAggregateTemplate(applicationContext, converter, dataAccessStrategy);
   }
 }
